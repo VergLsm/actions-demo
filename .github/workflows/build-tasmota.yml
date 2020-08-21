@@ -1,0 +1,80 @@
+name: Build Tasmota
+
+on:
+  workflow_dispatch:
+
+env:
+  TASMOTA_REPO_URL: https://github.com/arendst/Tasmota.git
+  TASMOTA_VER: v8.5.0
+  TASMOTA_REPO_BRANCH: master
+
+jobs:
+  build_packages:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+        fetch-depth: 1
+    - name: Clone source code
+      run: |
+        df -hT $PWD
+        git clone --depth 1 ${{ env.TASMOTA_REPO_URL }} -b ${{ env.TASMOTA_REPO_BRANCH }}
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+        architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install platformio
+    - name: Build firmware 1M
+      run: |
+        cd Tasmota
+        platformio run -e tasmota-CN
+        cp build_output/firmware/tasmota-CN.bin ../tasmota-CN-1M.bin
+    - name : Configuration
+      run: |
+        cd Tasmota
+        cp platformio_override_sample.ini platformio_override.ini
+        cp tasmota/user_config_override_sample.h tasmota/user_config_override.h
+        git apply ../diff_tasmota.patch
+    - name: Build firmware 4M
+      run: |
+        cd Tasmota
+        platformio run
+        cp build_output/firmware/tasmota-CN.bin ../tasmota-CN-4M.bin
+        ls ../tasmota*.bin
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: tasmota-${{ env.TASMOTA_VER }}
+        release_name: tasmota-${{ env.TASMOTA_VER }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: tasmota-CN-4M.bin
+        asset_name: tasmota-CN-4M.bin
+        asset_content_type: application/ipk
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: tasmota-CN-1M.bin
+        asset_name: tasmota-CN-1M.bin
+        asset_content_type: application/ipk
+  
+
