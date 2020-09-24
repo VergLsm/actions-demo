@@ -27,7 +27,7 @@
 
 --- tasmota/user_config_override.h       2020-09-16 15:52:52.623134135 +0800
 +++ tasmota/user_config_override.h      2020-09-16 15:56:42.227141161 +0800
-@@ -87,8 +87,106 @@
+@@ -87,8 +87,108 @@
  
  */
  
@@ -35,6 +35,8 @@
 +  #define USE_BMP
 +  #define USE_BH1750                             // [I2cDriver11] Enable BH1750 sensor (I2C address 0x23 or 0x5C) (+0k5 code)
 +#endif
++
++#define USE_PMS5003
 +
 +#define DISPLAY_CONFIG  // -- Enable Display driver --
 +
