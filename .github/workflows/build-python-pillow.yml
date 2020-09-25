@@ -1,0 +1,65 @@
+name: Build Python Pillow
+
+on:
+  workflow_dispatch:
+
+env:
+  OP_VER: 19.07.4
+  N2N_REPO_URL: https://github.com/ntop/n2n.git
+  _VER: 7.2.0
+  N2N_REPO_BRANCH: 2.8-stable
+  CONFIG_FILE: .config
+  ARCH_SUNXIA7: sunxi-cortexa7
+  DIR_SDK_SUNXIA7: openwrt-sdk-19.07.4-sunxi-cortexa7_gcc-7.5.0_musl_eabi.Linux-x86_64
+
+jobs:
+  build_packages:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: Download sdk
+      run: |
+        df -hT $PWD
+        wget https://downloads.openwrt.org/releases/${{ env.OP_VER }}/targets/sunxi/cortexa7/$DIR_SDK_SUNXIA7.tar.xz
+        tar -xf ${{ env.DIR_SDK_SUNXIA7 }}.tar.xz
+        ls -al
+    - name: Build ipk
+      run: |
+        cd ${{ env.DIR_SDK_SUNXIA7 }}
+        ./scripts/feeds update packages
+        ./scripts/feeds install python3-pillow
+        echo ===============================
+        find . -name pillow
+        echo ===============================
+        wget -O package/feeds/packages/pillow/Makefile https://raw.githubusercontent.com/openwrt/packages/c421901416c8d694aeaa320706fce9bcbd019449/lang/python/pillow/Makefile
+        make defconfig
+        # make package/python3-pillow/compile V=s -j$(nproc)
+        # cp $(find . -name python3-pillow_*.ipk) ../python3-pillow_${{ env._VER }}_${{ env.ARCH_SUNXIA7 }}_${{ env.OP_VER }}.ipk
+        cd ..
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: ${{ env.DIR_SDK_SUNXIA7 }}/.config
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: package_${{ env.OP_VER }}
+        release_name: package_${{ env.OP_VER }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: python3-pillow_${{ env._VER }}_${{ env.ARCH_SUNXIA7 }}_${{ env.OP_VER }}.ipk
+        asset_name: python3-pillow_${{ env._VER }}_${{ env.ARCH_SUNXIA7 }}_${{ env.OP_VER }}.ipk
+        asset_content_type: application/ipk
