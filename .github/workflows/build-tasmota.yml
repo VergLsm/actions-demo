@@ -4,12 +4,13 @@ on:
   workflow_dispatch:
 
 env:
+  BUILD_VER: 2
   TASMOTA_REPO_URL: https://github.com/arendst/Tasmota.git
-  TASMOTA_VER: v8.5.0
+  TASMOTA_VER: v8.5.1
   TASMOTA_REPO_BRANCH: master
 
 jobs:
-  build_packages:
+  build_tasmota:
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
 
@@ -21,7 +22,7 @@ jobs:
     - name: Clone source code
       run: |
         df -hT $PWD
-        git clone --depth 1 ${{ env.TASMOTA_REPO_URL }} -b ${{ env.TASMOTA_REPO_BRANCH }}
+        git clone --depth 1 ${{ env.TASMOTA_REPO_URL }} -b ${{ env.TASMOTA_VER }}
     - name: Set up Python 3.x
       uses: actions/setup-python@v2
       with:
@@ -54,8 +55,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: tasmota-${{ env.TASMOTA_VER }}
-        release_name: tasmota-${{ env.TASMOTA_VER }}
+        tag_name: tasmota-${{ env.TASMOTA_VER }}-${{ env.BUILD_VER }}
+        release_name: tasmota-${{ env.TASMOTA_VER }}-${{ env.BUILD_VER }}
         draft: false
         prerelease: false
     - name: Upload Release Asset
