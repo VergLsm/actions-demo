@@ -1,6 +1,6 @@
 --- platformio_override.ini      2020-08-04 12:31:17.000000000 +0000
 +++ platformio_override.ini     2020-08-04 13:07:35.000000000 +0000
-@@ -15,7 +15,7 @@
+@@ -16,7 +16,7 @@
  ; *** Build/upload environment
  default_envs =
  ; *** Uncomment the line(s) below to select version(s)
@@ -9,15 +9,14 @@
  ;                tasmota-debug
  ;                tasmota-ircustom
  ;                tasmota-minimal
-@@ -37,10 +37,14 @@
+@@ -38,9 +38,13 @@
  
  
  [common]
-+board_build.ldscript      = eagle.flash.4m1m.ld
- platform                  = ${core.platform}
  platform_packages         = ${core.platform_packages}
  build_unflags             = ${core.build_unflags}
  build_flags               = ${core.build_flags}
++                            -Wl,-Tesp8266.flash.4m1m.ld
 +; *** Use settings from file user_config_override.h
 +                          -DUSE_CONFIG_OVERRIDE
 +
@@ -138,3 +137,69 @@
 +#endif  // DISPLAY_CONFIG ----------------------------------------------------------------------------
  
  #endif  // _USER_CONFIG_OVERRIDE_H_
+
+--- tasmota/xsns_18_pms5003.ino
++++ tasmota/xsns_18_pms5003.ino
+@@ -48,6 +48,7 @@ struct PMS5003 {
+   uint8_t valid = 0;
+   uint8_t wake_mode = 1;
+   uint8_t ready = 1;
++  uint8_t read_timeout = 0;
+ } Pms;
+ 
+ enum PmsCommands
+@@ -154,7 +155,6 @@ bool PmsReadData(void)
+ #else
+   memcpy((void *)&pms_data, (void *)buffer_u16, 30);
+ #endif  // PMS_MODEL_PMS3003
+-  Pms.valid = 10;
+ 
+   return true;
+ }
+@@ -204,10 +204,13 @@ void PmsSecond(void)                 // Every second
+     if ((Settings.pms_wake_interval - Pms.time <= WARMUP_PERIOD) && !Pms.wake_mode) {
+       // wakeup sensor WARMUP_PERIOD before read interval
+       Pms.wake_mode = 1;
++      AddLog_P(LOG_LEVEL_DEBUG, PSTR("PMS: PmsSendCmd(CMD_WAKEUP)"));
+       PmsSendCmd(CMD_WAKEUP);
+     }
+     if (Pms.time >= Settings.pms_wake_interval) {
+       // sensor is awake and warmed up, set up for reading
++      while(PmsSerial->read() >= 0){}
++      AddLog_P(LOG_LEVEL_DEBUG, PSTR("PMS: PmsSendCmd(CMD_READ_DATA)"));
+       PmsSendCmd(CMD_READ_DATA);
+       Pms.ready = 1;
+       Pms.time = 0;
+@@ -216,6 +219,7 @@ void PmsSecond(void)                 // Every second
+ 
+   if (Pms.ready) {
+     if (PmsReadData()) {
++      Pms.read_timeout = 0;
+       Pms.valid = 10;
+       if (Settings.pms_wake_interval >= MIN_INTERVAL_PERIOD) {
+         PmsSendCmd(CMD_SLEEP);
+@@ -223,6 +227,7 @@ void PmsSecond(void)                 // Every second
+         Pms.ready = 0;
+       }
+     } else {
++      Pms.read_timeout++;
+       if (Pms.valid) {
+         Pms.valid--;
+         if (Settings.pms_wake_interval >= MIN_INTERVAL_PERIOD) {
+@@ -231,6 +236,16 @@ void PmsSecond(void)                 // Every second
+         }
+       }
+     }
++    if (Pms.read_timeout == 5) {
++      AddLog_P(LOG_LEVEL_DEBUG, PSTR("PMS: timeout"));
++      if (Settings.pms_wake_interval >= MIN_INTERVAL_PERIOD) {
++        // Passive Mode
++        PmsSendCmd(CMD_MODE_PASSIVE);
++        Pms.wake_mode = 0;
++        Pms.read_timeout = 0;
++        Pms.time = Settings.pms_wake_interval - WARMUP_PERIOD - 1;
++      }
++    }
+   }
+ }
+ 
