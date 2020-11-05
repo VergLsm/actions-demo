@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
 
 env:
-  BUILD_VER: 2
+  BUILD_VER: 1
   TASMOTA_REPO_URL: https://github.com/arendst/Tasmota.git
-  TASMOTA_VER: v8.5.1
+  TASMOTA_VER: v9.1.0
   TASMOTA_REPO_BRANCH: master
 
 jobs:
@@ -42,7 +42,8 @@ jobs:
         cd Tasmota
         cp platformio_override_sample.ini platformio_override.ini
         cp tasmota/user_config_override_sample.h tasmota/user_config_override.h
-        git apply ../diff_tasmota.patch
+        git apply ../diff_tasmota_1.patch
+        git apply ../diff_tasmota_2.patch
     - name: Build firmware 4M
       run: |
         cd Tasmota
