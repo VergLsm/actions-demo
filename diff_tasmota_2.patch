@@ -1,6 +1,6 @@
---- /tasmota/user_config_override.h
-+++ /tasmota/user_config_override.h
-@@ -84,8 +84,108 @@
+--- a/tasmota/user_config_override.h
++++ b/tasmota/user_config_override.h
+@@ -84,8 +84,127 @@
  
  */
  
@@ -109,5 +109,24 @@
 -
 -
 +#endif  // DISPLAY_CONFIG ----------------------------------------------------------------------------
++
++#undef  STA_SSID1
++#define STA_SSID1         "4201_iot"             // [Ssid1] Wifi SSID
++
++#undef  STA_PASS1
++#define STA_PASS1         "13726010595"     // [Password1] Wifi password
++
++#undef  MQTT_HOST
++#define MQTT_HOST         "192.168.1.253" // [MqttHost]
++
++#undef  NTP_SERVER1
++#define NTP_SERVER1            "192.168.1.253"       // [NtpServer1] Select first NTP server by name or IP address (129.250.35.250)
++#undef  NTP_SERVER2            // [NtpServer2] Select second NTP server by name or IP address (5.39.184.5)
++#define NTP_SERVER2            "ntp.aliyun.com"
++#undef  NTP_SERVER3            // [NtpServer3] Select third NTP server by name or IP address (93.94.224.67)
++#define NTP_SERVER3            "ntp1.aliyun.com"
++
++#undef  APP_TIMEZONE
++#define APP_TIMEZONE           8                 // [Timezone] +1 hour (Amsterdam) (-13 .. 14 = hours from UTC, 99 = use TIME_DST/TIME_STD)
  
  #endif  // _USER_CONFIG_OVERRIDE_H_
