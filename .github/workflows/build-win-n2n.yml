@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  BUILD_VER: 1
+  BUILD_VER: 2
   N2N_REPO_URL: https://github.com/ntop/n2n.git
   N2N_VER: 2.8.0
   N2N_REPO_BRANCH: 2.8-stable
@@ -25,12 +25,16 @@ jobs:
         git clone --depth=1 ${{ env.N2N_REPO_URL }} -b ${{ env.N2N_REPO_BRANCH }}
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
+    - name: Install libraries with chocolatey
+      run: |
+        choco install --no-progress openssl
     - name: Build
       run: |
         cd n2n
+        git apply ../CMakeLists.txt.patch
         md build
         cd build
-        cmake ..
+        cmake -DOPENSSL_USE_STATIC_LIBS=true ..
         dir
         msbuild edge.vcxproj /t:Build /p:Configuration=Release
         cp Release/edge.exe ../../n2n_edge.exe

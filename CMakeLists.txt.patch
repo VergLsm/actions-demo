@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3156a8b..803c6e8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -123,6 +123,8 @@ if(N2N_OPTION_AES)
+   target_link_libraries(n2n ${OPENSSL_LIBRARIES})
+ endif(N2N_OPTION_AES)
+ 
++add_definitions(-DHAVE_OPENSSL_1_1)
++target_link_libraries(n2n Crypt32)
+ 
+ add_executable(edge src/edge.c)
+ target_link_libraries(edge n2n)
