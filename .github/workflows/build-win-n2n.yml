@@ -1,15 +1,16 @@
-name: Build Packages
+name: Build Win n2n
 
 on:
   workflow_dispatch:
 
 env:
+  BUILD_VER: 1
   N2N_REPO_URL: https://github.com/ntop/n2n.git
   N2N_VER: 2.8.0
   N2N_REPO_BRANCH: 2.8-stable
 
 jobs:
-  build_packages:
+  build_win_n2n:
     runs-on: windows-latest
     if: github.event.repository.owner.id == github.event.sender.id
 
@@ -21,13 +22,12 @@ jobs:
     - name: Clone source code
       run: |
         df -hT $PWD
-        git clone --depth 1 ${{ env.N2N_REPO_URL }} -b ${{ env.N2N_REPO_BRANCH }}
+        git clone --depth=1 ${{ env.N2N_REPO_URL }} -b ${{ env.N2N_REPO_BRANCH }}
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.1
+      uses: microsoft/setup-msbuild@v1.0.2
     - name: Build
       run: |
         cd n2n
-        git apply ../diff.patch
         md build
         cd build
         cmake ..
@@ -42,8 +42,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: package_n2n
-        release_name: package_n2n
+        tag_name: package_win_n2n_${{ env.BUILD_VER }}
+        release_name: package_win_n2n_${{ env.BUILD_VER }}
         draft: false
         prerelease: false
     - name: Upload Release Asset
