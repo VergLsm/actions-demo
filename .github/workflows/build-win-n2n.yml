@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
 
 env:
-  BUILD_VER: 2
+  BUILD_VER: 1
   N2N_REPO_URL: https://github.com/ntop/n2n.git
-  N2N_VER: 2.8.0
-  N2N_REPO_BRANCH: 2.8-stable
+  N2N_VER: 2.9.0
+  N2N_REPO_BRANCH: dev
 
 jobs:
   build_win_n2n:
@@ -31,7 +31,7 @@ jobs:
     - name: Build
       run: |
         cd n2n
-        git apply ../CMakeLists.txt.patch
+        git apply ../n2n/CMakeLists.txt.patch
         md build
         cd build
         cmake -DOPENSSL_USE_STATIC_LIBS=true ..
@@ -46,8 +46,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: n2n_win_${{ env.BUILD_VER }}
-        release_name: n2n_win_${{ env.BUILD_VER }}
+        tag_name: n2n_win_${{ env.N2N_VER }}_${{ env.BUILD_VER }}
+        release_name: n2n_win_${{ env.N2N_VER }}_${{ env.BUILD_VER }}
         draft: false
         prerelease: false
     - name: Upload Release Asset

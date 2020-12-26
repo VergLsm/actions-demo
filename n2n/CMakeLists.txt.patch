@@ -1,0 +1,22 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index bbe38a4..2fcd2f2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -39,7 +39,7 @@ add_definitions(-DN2N_VERSION="${N2N_VERSION}" -DN2N_OSNAME="${N2N_OSNAME}")
+ OPTION(BUILD_SHARED_LIBS "BUILD Shared Library" OFF)
+ 
+ # N2n specific params
+-OPTION(N2N_OPTION_USE_OPENSSL "USE OPENSSL Library" OFF)
++OPTION(N2N_OPTION_USE_OPENSSL "USE OPENSSL Library" ON)
+ OPTION(N2N_OPTION_USE_PCAPLIB "USE PCAP Library" OFF)
+ OPTION(N2N_OPTION_USE_ZSTD "USE ZSTD Library" OFF)
+ 
+@@ -142,7 +142,7 @@ endif(N2N_OPTION_USE_ZSTD)
+ if(DEFINED WIN32)
+   add_library(edge_utils_win32 src/edge_utils_win32.c)
+   add_subdirectory(win32)
+-  target_link_libraries(n2n edge_utils_win32 n2n_win32 )
++  target_link_libraries(n2n edge_utils_win32 n2n_win32 Crypt32)
+ endif(DEFINED WIN32)
+ 
+ add_executable(edge src/edge.c)
