@@ -46,8 +46,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: package_win_n2n_${{ env.BUILD_VER }}
-        release_name: package_win_n2n_${{ env.BUILD_VER }}
+        tag_name: n2n_win_${{ env.BUILD_VER }}
+        release_name: n2n_win_${{ env.BUILD_VER }}
         draft: false
         prerelease: false
     - name: Upload Release Asset
