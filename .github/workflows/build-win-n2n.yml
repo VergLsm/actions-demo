@@ -7,7 +7,7 @@ env:
   BUILD_VER: 1
   N2N_REPO_URL: https://github.com/ntop/n2n.git
   N2N_VER: 2.9.0
-  N2N_REPO_BRANCH: dev
+  N2N_REPO_BRANCH: 0bdab269217e7d69f2200e90632bf561d627502e
 
 jobs:
   build_win_n2n:

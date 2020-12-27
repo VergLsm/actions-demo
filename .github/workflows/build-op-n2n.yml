@@ -6,7 +6,7 @@ on:
 env:
   BUILD_VER: 1
   OP_VER: 19.07.5
-  N2N_VER: 2.8.0
+  N2N_VER: 2.9.0
   N2N_REPO_BRANCH: myn2n
   ARCH_MT7620: ramips-mt7620
   ARCH_MT7621: ramips-mt7621
@@ -65,8 +65,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: n2n_op_${{ env.OP_VER }}_${{ env.BUILD_VER }}
-        release_name: n2n_op_${{ env.OP_VER }}_${{ env.BUILD_VER }}
+        tag_name: n2n_op_${{ env.N2N_VER }}_${{ env.OP_VER }}_${{ env.BUILD_VER }}
+        release_name: n2n_op_${{ env.N2N_VER }}_${{ env.OP_VER }}_${{ env.BUILD_VER }}
         draft: false
         prerelease: false
     # - name: Upload Release Asset
