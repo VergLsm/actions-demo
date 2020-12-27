@@ -7,7 +7,7 @@ env:
   BUILD_VER: 1
   N2N_REPO_URL: https://github.com/ntop/n2n.git
   N2N_VER: 2.9.0
-  N2N_REPO_BRANCH: dev
+  N2N_COMMIT_ID: 0bdab269217e7d69f2200e90632bf561d627502e
 
 jobs:
   build_win_n2n:
@@ -19,15 +19,19 @@ jobs:
       uses: actions/checkout@main
       with:
         fetch-depth: 1
-    - name: Clone source code
-      run: |
-        df -hT $PWD
-        git clone --depth=1 ${{ env.N2N_REPO_URL }} -b ${{ env.N2N_REPO_BRANCH }}
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
     - name: Install libraries with chocolatey
       run: |
         choco install --no-progress openssl
+        choco install --no-progress wget
+    - name: Get source code
+      run: |
+        df -hT $PWD
+        # git clone --depth=1 ${{ env.N2N_REPO_URL }} -b ${{ env.N2N_REPO_BRANCH }}
+        wget https://github.com/ntop/n2n/archive/${{ env.N2N_COMMIT_ID }}.zip
+        unzip ${{ env.N2N_COMMIT_ID }}.zip
+        mv n2n-${{ env.N2N_COMMIT_ID }} n2n
     - name: Build
       run: |
         cd n2n
