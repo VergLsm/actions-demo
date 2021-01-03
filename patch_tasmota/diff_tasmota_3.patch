@@ -1,0 +1,111 @@
+--- a/tasmota/user_config_override.h
++++ b/tasmota/user_config_override.h
+@@ -84,4 +84,108 @@
+ 
+ */
+ 
++#ifdef USE_I2C
++  #define USE_BMP
++  #define USE_BH1750                             // [I2cDriver11] Enable BH1750 sensor (I2C address 0x23 or 0x5C) (+0k5 code)
++#endif
++
++#define USE_PMS5003
++
++#define DISPLAY_CONFIG  // -- Enable Display driver --
++
++#ifdef DISPLAY_CONFIG  // ---------------------------------------------------------------------------
++  #undef  USE_SPI
++  #define USE_DISPLAY
++
++ // #ifdef  USE_DISPLAY_MODES1TO5
++ //   #undef  USE_DISPLAY_MODES1TO5                // Disable display mode 1 to 5 in addition to mode 0
++ // #endif
++
++
++// Choose your display type by selecting the appropriate block of settings
++
++  // LCD display (I2C addresses 0x27 and 0x3F)
++  #ifndef USE_DISPLAY_LCD                      // Enable
++    #define USE_DISPLAY_LCD
++  #endif
++//  #ifdef USE_DISPLAY_LCD                       // Disable
++//    #undef USE_DISPLAY_LCD
++//  #endif
++
++  // OLED 128x64 display (I2C addresses 0x3C and 0x3D)
++//  #ifndef USE_DISPLAY_SSD1306                  // Enable
++//    #define USE_DISPLAY_SSD1306
++//  #endif
++  #ifdef USE_DISPLAY_SSD1306                   // Disable
++    #undef USE_DISPLAY_SSD1306
++  #endif
++
++  // OLED SH1106 display (I2C addresses 0x3C and 0x3D)
++//  #ifndef USE_DISPLAY_SSD1306                  // Enable
++//    #define USE_DISPLAY_SSD1306
++//  #endif
++  #ifdef USE_DISPLAY_SH1106                   // Disable
++    #undef USE_DISPLAY_SH1106
++  #endif
++
++  // 8x8 Matrix display
++//  #ifndef USE_DISPLAY_MATRIX                   // Enable
++//    #define USE_DISPLAY_MATRIX
++//  #endif
++//  #ifdef USE_DISPLAY_MATRIX                    // Disable
++//    #undef USE_DISPLAY_MATRIX
++//  #endif
++
++  // [DisplayModel 4] ILI9341 TFT 480x320 display (+19k code)
++//  #ifndef USE_DISPLAY_ILI9341                  // Enable
++//    #define USE_DISPLAY_ILI9341
++//    #define USE_SPI
++//  #endif
++  #ifdef USE_DISPLAY_ILI9341                   // Disable
++    #undef USE_DISPLAY_ILI9341
++  #endif
++
++  // e-paper display (choose 29 or 42)
++//  #ifndef USE_DISPLAY_EPAPER                   // Enable
++//    #define USE_SPI
++//    #define SHOW_SPLASH
++//    #define USE_DISPLAY_EPAPER
++//    #define USE_DISPLAY_EPAPER_29                // [DisplayModel 5] e-paper 2.9 inch display (+19k code)
++//    #define USE_DISPLAY_EPAPER_42                // [DisplayModel 6] e-paper 4.2 inch display
++//  #endif
++  #ifdef  USE_DISPLAY_EPAPER                   // Disable
++    #undef USE_DISPLAY_EPAPER
++    #undef USE_DISPLAY_EPAPER_29
++    #undef USE_DISPLAY_EPAPER_42
++  #endif
++
++  // [DisplayModel 8] ILI9488
++//  #ifndef USE_DISPLAY_ILI9488                  // Enable
++//    #define USE_SPI
++//    #define USE_DISPLAY_ILI9488
++//  #endif
++  #ifdef USE_DISPLAY_ILI9488                   // Disable
++    #undef USE_DISPLAY_ILI9488
++  #endif
++
++  // [DisplayModel 9] SSD1351
++//  #ifndef USE_DISPLAY_SSD1351                  // Enable
++//    #define USE_SPI
++//    #define USE_DISPLAY_SSD1351
++//  #endif
++  #ifdef USE_DISPLAY_SSD1351                   // Disable
++    #undef USE_DISPLAY_SSD1351
++  #endif
++
++  // [DisplayModel 10] RA8876
++//  #ifndef USE_DISPLAY_RA8876                   // Enable
++//    #define USE_SPI
++//    #define USE_DISPLAY_RA8876
++//  #endif
++  #ifdef USE_DISPLAY_RA8876                    // Disable
++    #undef USE_DISPLAY_RA8876
++  #endif
++
++#endif  // DISPLAY_CONFIG ----------------------------------------------------------------------------
++
+ #undef  STA_SSID1

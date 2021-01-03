@@ -1,0 +1,21 @@
+--- a/tasmota/user_config_override.h
++++ b/tasmota/user_config_override.h
+@@ -84,6 +84,18 @@
+ 
+ */
+ 
++#ifndef USE_TASMOTA_CLIENT
++#define USE_TASMOTA_CLIENT    // Enable the driver
++#endif
++
++#ifndef USE_TASMOTA_CLIENT_FLASH_SPEED
++#define USE_TASMOTA_CLIENT_FLASH_SPEED 57600    // Configure the baud rate of the bootloader
++#endif
++
++#ifndef USE_TASMOTA_CLIENT_SERIAL_SPEED 57600
++#define USE_TASMOTA_CLIENT_SERIAL_SPEED 57600    // Configure the baud rate at which the client microcontroller will be interfacing to Tasmota
++#endif
++
+ #ifdef USE_I2C
+   #define USE_BMP
+   #define USE_BH1750                             // [I2cDriver11] Enable BH1750 sensor (I2C address 0x23 or 0x5C) (+0k5 code)

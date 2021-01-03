@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  BUILD_VER: 2
+  BUILD_VER: 3
   TASMOTA_REPO_URL: https://github.com/arendst/Tasmota.git
   TASMOTA_VER: v9.2.0
   TASMOTA_REPO_BRANCH: master
@@ -35,20 +35,31 @@ jobs:
     - name: Build firmware 1M
       run: |
         cd Tasmota
+        cp tasmota/user_config_override_sample.h tasmota/user_config_override.h
+        git apply ../patch_tasmota/diff_tasmota_2.patch
         platformio run -e tasmota-CN
         cp build_output/firmware/tasmota-CN.bin ../tasmota-CN-1M.bin
     - name : Configuration
       run: |
         cd Tasmota
         cp platformio_override_sample.ini platformio_override.ini
-        cp tasmota/user_config_override_sample.h tasmota/user_config_override.h
-        git apply ../tasmota/diff_tasmota_1.patch
-        git apply ../tasmota/diff_tasmota_2.patch
+        git apply ../patch_tasmota/diff_tasmota_1.patch
+        git apply ../patch_tasmota/diff_tasmota_3.patch
     - name: Build firmware 4M
       run: |
         cd Tasmota
         platformio run
         cp build_output/firmware/tasmota-CN.bin ../tasmota-CN-4M.bin
+        ls ../tasmota*.bin
+    - name : Configuration
+      run: |
+        cd Tasmota
+        git apply ../patch_tasmota/diff_tasmota_4.patch
+    - name: Build firmware 4M
+      run: |
+        cd Tasmota
+        platformio run
+        cp build_output/firmware/tasmota-CN.bin ../tasmota-CN-4M-whit-client.bin
         ls ../tasmota*.bin
     - name: Create Release
       id: create_release
@@ -68,6 +79,15 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: tasmota-CN-4M.bin
         asset_name: tasmota-CN-4M.bin
+        asset_content_type: application/ipk
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: tasmota-CN-4M-whit-client.bin
+        asset_name: tasmota-CN-4M-whit-client.bin
         asset_content_type: application/ipk
     - name: Upload Release Asset
       uses: actions/upload-release-asset@main
