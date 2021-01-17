@@ -1,9 +1,9 @@
 --- a/tasmota/user_config_override.h
 +++ b/tasmota/user_config_override.h
-@@ -84,4 +84,108 @@
+@@ -84,3 +84,107 @@
  
  */
- 
++
 +#ifdef USE_I2C
 +  #define USE_BMP
 +  #define USE_BH1750                             // [I2cDriver11] Enable BH1750 sensor (I2C address 0x23 or 0x5C) (+0k5 code)
@@ -107,5 +107,4 @@
 +  #endif
 +
 +#endif  // DISPLAY_CONFIG ----------------------------------------------------------------------------
-+
- #undef  STA_SSID1
+ 

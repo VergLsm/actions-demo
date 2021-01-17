@@ -1,19 +1,10 @@
 --- platformio_override.ini
 +++ platformio_override.ini
-@@ -16,7 +16,7 @@
- ; *** Build/upload environment
- default_envs =
- ; *** Uncomment the line(s) below to select version(s)
--                tasmota
-+                tasmota-CN
- ;                tasmota-debug
- ;                tasmota-ircustom
- ;                tasmota-minimal
 @@ -41,6 +41,10 @@
  platform_packages           = ${core.platform_packages}
  build_unflags               = ${core.build_unflags}
  build_flags                 = ${core.build_flags}
-+                            -Wl,-Tesp8266.flash.4m1m.ld
++                            -Tesp8266.flash.4m1m.ld
 +; *** Use settings from file user_config_override.h
 +                          -DUSE_CONFIG_OVERRIDE
 +
