@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  BUILD_VER: 4
+  BUILD_VER: 5
   TASMOTA_REPO_URL: https://github.com/arendst/Tasmota.git
   TASMOTA_VER: v9.2.0
   TASMOTA_REPO_BRANCH: master
@@ -36,7 +36,7 @@ jobs:
       run: |
         cd Tasmota
         cp platformio_override_sample.ini platformio_override.ini
-        git apply ../patch_tasmota/1_po_tasmota-CN.patch
+        git apply ../patch_tasmota/1_po_common.patch
         cp tasmota/user_config_override_sample.h tasmota/user_config_override.h
         git apply ../patch_tasmota/2_uco_FAR.patch
         platformio run
@@ -45,7 +45,7 @@ jobs:
       run: |
         cd Tasmota
         cp platformio_override_sample.ini platformio_override.ini
-        git apply ../patch_tasmota/1_po_tasmota-CN.patch
+        git apply ../patch_tasmota/1_po_common.patch
         cp tasmota/user_config_override_sample.h tasmota/user_config_override.h
         git apply ../patch_tasmota/2_uco_4201.patch
         platformio run
@@ -54,26 +54,29 @@ jobs:
       run: |
         cd Tasmota
         cp platformio_override_sample.ini platformio_override.ini
-        git apply ../patch_tasmota/1_po_tasmota-CN.patch
+        git apply ../patch_tasmota/1_po_common.patch
         git apply ../patch_tasmota/3_po_4M_config-override.patch
         cp tasmota/user_config_override_sample.h tasmota/user_config_override.h
         git apply ../patch_tasmota/2_uco_4201.patch
         git apply ../patch_tasmota/4_uco.patch
         platformio run
         cp build_output/firmware/tasmota-CN.bin ../tasmota-CN-4M.bin
-        ls ../tasmota*.bin
+    - name: Build firmware 4M M5_ST
+      run: |
+        cd Tasmota
+        platformio run -e M5_ST
+        cp build_output/firmware/M5_ST.bin ../tasmota-CN-4M-M5_ST.bin
     - name: Build firmware 4M DM
       run: |
         cd Tasmota
         cp platformio_override_sample.ini platformio_override.ini
-        git apply ../patch_tasmota/1_po_tasmota-CN.patch
+        git apply ../patch_tasmota/1_po_common.patch
         git apply ../patch_tasmota/3_po_4M_config-override.patch
         cp tasmota/user_config_override_sample.h tasmota/user_config_override.h
         git apply ../patch_tasmota/2_uco_FAR.patch
         git apply ../patch_tasmota/4_uco_DM.patch
         platformio run
         cp build_output/firmware/tasmota-CN.bin ../tasmota-CN-4M-DM.bin
-        ls ../tasmota*.bin
     - name: Create Release
       id: create_release
       uses: actions/create-release@main
@@ -110,6 +113,15 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: tasmota-CN-4M.bin
         asset_name: tasmota-CN-4M.bin
+        asset_content_type: application/ipk
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: tasmota-CN-4M-M5_ST.bin
+        asset_name: tasmota-CN-4M-M5_ST.bin
         asset_content_type: application/ipk
     - name: Upload Release Asset
       uses: actions/upload-release-asset@main

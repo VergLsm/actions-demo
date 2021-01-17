@@ -9,3 +9,10 @@
  ;                tasmota-debug
  ;                tasmota-ircustom
  ;                tasmota-minimal
+@@ -38,4 +38,6 @@
+ ;                tasmota32solo1
+ 
++[env:M5_ST]
++build_flags             = ${common.build_flags} -DMY_LANGUAGE=zh_CN -DM5_ST
+ 
+ [common]

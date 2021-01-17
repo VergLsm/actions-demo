@@ -1,6 +1,6 @@
 --- a/tasmota/user_config_override.h
 +++ b/tasmota/user_config_override.h
-@@ -84,8 +84,26 @@
+@@ -84,8 +84,40 @@
  
  */
  
@@ -23,8 +23,22 @@
 +#undef  NTP_SERVER3            // [NtpServer3] Select third NTP server by name or IP address (93.94.224.67)
 +#define NTP_SERVER3            "ntp1.aliyun.com"
 +
++#undef  USER_TEMPLATE
++#if defined  Watchdog_FAR
++  #define USER_TEMPLATE     "{\"NAME\":\"Watchdog_FAR_Temp\",\"GPIO\":[256,0,320,0,0,0,0,0,0,0,0,0,0,0],\"FLAG\":0,\"BASE\":18}"
++  #undef  FRIENDLY_NAME
++  #define FRIENDLY_NAME     "Watchdog_FAR"
++#elif defined DM
++  #define USER_TEMPLATE     "{\"NAME\":\"DM_Temp\",\"GPIO\":[0,1696,320,1664,225,224,0,0,32,33,1,0,0,0],\"FLAG\":0,\"BASE\":18}"
++  #undef  FRIENDLY_NAME
++  #define FRIENDLY_NAME     "DM"
++#else
++  #define USER_TEMPLATE     "{\"NAME\":\"Generic\",\"GPIO\":[1,1,1,1,1,1,1,1,1,1,1,1,1],\"FLAG\":0,\"BASE\":18}"
++#endif
++#undef  MODULE
++#define MODULE                 0
 +#undef  APP_TIMEZONE
 +#define APP_TIMEZONE           8                 // [Timezone] +1 hour (Amsterdam) (-13 .. 14 = hours from UTC, 99 = use TIME_DST/TIME_STD)
 -
-
+ 
  #endif  // _USER_CONFIG_OVERRIDE_H_
