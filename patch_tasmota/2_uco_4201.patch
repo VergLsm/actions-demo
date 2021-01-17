@@ -14,7 +14,7 @@
 +#define MQTT_HOST         "192.168.1.253" // [MqttHost]
  
 +#undef  NTP_SERVER1
-+#define NTP_SERVER1            "192.168.1.253"       // [NtpServer1] Select first NTP server by name or IP address (129.250.35.250)
++#define NTP_SERVER1            "192.168.1.254"       // [NtpServer1] Select first NTP server by name or IP address (129.250.35.250)
 +#undef  NTP_SERVER2            // [NtpServer2] Select second NTP server by name or IP address (5.39.184.5)
 +#define NTP_SERVER2            "ntp.aliyun.com"
 +#undef  NTP_SERVER3            // [NtpServer3] Select third NTP server by name or IP address (93.94.224.67)

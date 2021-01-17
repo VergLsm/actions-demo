@@ -1,0 +1,11 @@
+--- platformio_override.ini
++++ platformio_override.ini
+@@ -16,7 +16,7 @@
+ ; *** Build/upload environment
+ default_envs =
+ ; *** Uncomment the line(s) below to select version(s)
+-                tasmota
++                tasmota-CN
+ ;                tasmota-debug
+ ;                tasmota-ircustom
+ ;                tasmota-minimal
